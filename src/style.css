@@ -1,0 +1,288 @@
+html, body {
+    margin: 0;
+    height: 100%;
+}
+
+html * {
+    font-family: 'Roboto', sans-serif;
+}
+
+.material-symbols-outlined {
+    font-size: 25px;
+    font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24
+}
+
+.vertical-flex {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.navbar {
+    background-color: lightsalmon;
+    margin: 0px;
+    flex: 0 1 auto;
+    display: flex;
+    align-items: center;
+}
+
+.to-do-header {
+    flex: 4;
+}
+
+.h1-notes {
+    margin-left: 200px;
+}
+
+.button-header {
+    flex-grow: 1;
+}
+
+.log-in-button {
+    width: 200px;
+    height: 50px;
+}
+
+.top-layout-grid {
+    flex: 1 1 auto;
+    display: grid;
+    grid-template-columns: 500px 1fr;
+}
+
+.sidebar {
+    padding-top: 5px;
+    padding-left: 15px;
+    background-color: #F0F0F0;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-item {
+    display: flex;
+    align-items: center;
+}
+
+.inbox-icon {
+    color: blue;
+}
+
+.calendar-icon {
+    color: green;
+}
+
+.upcoming-icon {
+    color: orange;
+}
+
+.sidebar-project {
+    margin-top: 15px;
+}
+
+.project-heading {
+    font-weight: bold;
+}
+
+.sidebar-project-item {
+    display: flex;
+    align-items: center;
+}
+
+.sidebar-project-item-selected {
+    display: flex;
+    align-items: center;
+    background-color: lightgrey;
+}
+
+.note-layout-grid {
+    margin-left: 50px;
+    margin-right: 300px;
+}
+
+.today-header {
+    display: flex;
+    align-items: center;
+}
+
+.h2-today {
+    margin-right: auto;
+}
+
+.filter-div {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+.filter-div:hover {
+    box-shadow: 0 0 0 2px lightgrey;
+    background-color: lightgrey;
+}
+
+.filter {
+    color: grey;
+}
+
+.personal-grid {
+    display: grid;
+    grid-template-rows: 25px;
+    grid-auto-rows: 75px;
+}
+
+.title-personal {
+    font-weight: bold;
+}
+
+.note {
+    display: flex;
+    border-top: 1px solid lightgrey;
+    padding-left: 5px;
+    padding-top: 5px;
+    padding-bottom: 20px;
+}
+
+.note:last-child {
+    border-bottom: 1px solid lightgrey;
+}
+
+.note-checkbox {
+    width: 25px;
+    height: 20px;
+    margin-top: 20px;
+}
+
+.note-text-layout {
+    margin-top: 4px;
+}
+
+.note-text {
+    
+}
+
+.note-time-section {
+    display: flex;
+    margin-top: 2px;
+    align-items: center;
+    font-size: 13px;
+    color: green;
+}
+
+.note-time-icon {
+    font-size: 13px;
+}
+
+.note-due-date-section {
+    display: flex;
+    margin-top: 2px;
+    align-items: center;
+    font-size: 13px;
+    color: red;
+}
+
+.note-due-date-icon {
+    font-size: 13px;
+}
+
+.note-rhs-div {
+    display: flex;
+    flex-direction: column;
+    margin-left: auto;
+    margin-right: 5px;
+}
+
+.remove-note-button {
+    align-self: flex-end;
+    background-color: lightcoral;
+    margin-top: 2px;
+}
+
+.note-category {
+    align-self: flex-end;
+}
+
+.note-add-task-div {
+    margin-top: 20px;
+}
+
+.note-add-task-span:hover {
+    box-shadow: 0 0 0 2px lightgrey;
+    background-color: lightgrey;
+}
+
+.note-add-task {
+    font-size: 15px;
+    color: grey;
+}
+
+.note-add-task-icon {
+    vertical-align: middle;
+    font-size: 25px;
+    color: orange;
+}
+
+#add-project-span {
+}
+
+#add-project-span:hover {
+    box-shadow: 0 0 0 2px lightgrey;
+    background-color: lightgrey;
+}
+
+#add-project-text {
+    font-size: 15px;
+    color: grey;
+}
+
+#add-project-icon {
+    vertical-align: middle;
+    font-size: 25px;
+    color: orange;
+}
+
+.popUp {
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    width: 400px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    position: fixed;
+    background-color: lightsalmon;
+    font-weight: bold;
+    z-index: 2;
+}
+
+.popup-label {
+    margin-left: 5px;
+}
+
+.popup-input {
+    margin: 5px;
+}
+
+.popup-button-div {
+    margin: 5px;
+    display: flex;
+    gap: 5px;
+}
+
+.popup-button {
+    flex: 1;
+}
+
+.disableDiv {
+    position: fixed;
+    padding: 0;
+    margin: 0;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.5;
+    background-color: black;
+    z-index: 1;
+  }
