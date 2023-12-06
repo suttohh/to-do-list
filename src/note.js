@@ -1,4 +1,5 @@
 import {SidebarItem, getSelectedSidebarItem, getSidebarItemById} from './sidebar.js';
+import { parse, compareAsc } from "date-fns";
 
 export function Note(id, text, reminderTime, category, isChecked, dueDate, projectId) {
     this.id = id;
@@ -114,6 +115,7 @@ Note.filterNotes = function(notes, text, category, reminderTime) {
 export function createAddNotePopUp(grid, noteList) {
     const popUpDiv = document.createElement('div');
     popUpDiv.classList.add('popUp');
+    popUpDiv.setAttribute('id', 'popup');
 
     const noteTextLabel = document.createElement('label');
     noteTextLabel.classList.add('popup-label');
@@ -122,7 +124,12 @@ export function createAddNotePopUp(grid, noteList) {
     const noteTextInput = document.createElement('input');
     noteTextInput.classList.add('note-text-input', 'popup-input');
     noteTextInput.setAttribute('type', 'text');
+    noteTextInput.required = true;
     popUpDiv.appendChild(noteTextInput);
+    const noteTextRequiredError = document.createElement('span');
+    noteTextRequiredError.classList.add('error');
+    noteTextRequiredError.setAttribute('aria-live', 'polite');
+    popUpDiv.appendChild(noteTextRequiredError);
 
     const noteCategoryLabel = document.createElement('label');
     noteCategoryLabel.classList.add('popup-label');
@@ -143,6 +150,11 @@ export function createAddNotePopUp(grid, noteList) {
         categoryOption.innerHTML = options[i];
         noteCategoryDropdown.appendChild(categoryOption);
     }
+    const noteCategoryRequiredError = document.createElement('span');
+    noteCategoryRequiredError.classList.add('error', 'required-error');
+    noteCategoryRequiredError.setAttribute('aria-live', 'polite');
+    popUpDiv.appendChild(noteCategoryRequiredError);
+
 
     const noteReminderLabel = document.createElement('label');
     noteReminderLabel.classList.add('popup-label');
@@ -152,6 +164,10 @@ export function createAddNotePopUp(grid, noteList) {
     noteReminderInput.classList.add('note-reminder-input', 'popup-input');
     noteReminderInput.setAttribute('type', 'time');
     popUpDiv.appendChild(noteReminderInput);
+    const noteReminderRequiredError = document.createElement('span');
+    noteReminderRequiredError.classList.add('error', 'required-error');
+    noteReminderRequiredError.setAttribute('aria-live', 'polite');
+    popUpDiv.appendChild(noteReminderRequiredError);
 
     const noteDueDateLabel = document.createElement('label');
     noteDueDateLabel.classList.add('note-due-date-label', 'popup-label');
@@ -160,7 +176,16 @@ export function createAddNotePopUp(grid, noteList) {
     const noteDueDateInput = document.createElement('input');
     noteDueDateInput.setAttribute('type', 'datetime-local');
     noteDueDateInput.classList.add('popup-input');
+    noteDueDateInput.required = true;
     popUpDiv.appendChild(noteDueDateInput);
+    const noteDueDateError = document.createElement('span');
+    noteDueDateError.classList.add('error');
+    noteDueDateError.setAttribute('aria-live', 'polite');
+    popUpDiv.appendChild(noteDueDateError);
+    const noteDueDateRequiredError = document.createElement('span');
+    noteDueDateRequiredError.classList.add('error', 'required-error');
+    noteDueDateRequiredError.setAttribute('aria-live', 'polite');
+    popUpDiv.appendChild(noteDueDateRequiredError);
 
     const popupButtonDiv = document.createElement('div');
     popupButtonDiv.classList.add('popup-button-div');
@@ -172,11 +197,19 @@ export function createAddNotePopUp(grid, noteList) {
     const addNoteButton = document.createElement('button');
     addNoteButton.classList.add('popup-button');
     addNoteButton.innerHTML = "Add Note";
+    addNoteButton.disabled = true;
     popupButtonDiv.appendChild(addNoteButton);
     const disableDiv = document.createElement('div');
     disableDiv.classList.add('disableDiv');
     document.body.appendChild(disableDiv);
     addNoteButton.onclick = () => {
+        const inputEvent = new Event('input');
+        noteTextInput.dispatchEvent(inputEvent);
+        noteDueDateInput.dispatchEvent(inputEvent);
+        //After dispatching the input event, checks to see if any errors are active (i.e. if the submit button should be disabled) and aborts the Add Note functionality if it shouldn't be available anymore
+        if(isSubmitButtonDisabled()) {
+            return;
+        }
         const newNote = new Note(noteList.length + 1, noteTextInput.value, noteReminderInput.value, noteCategoryDropdown.value, false, noteDueDateInput.value, getSelectedSidebarItem().getId());
         grid.appendChild(newNote.generateNote(noteList));
         noteList.push(newNote);
@@ -188,6 +221,42 @@ export function createAddNotePopUp(grid, noteList) {
         popUpDiv.remove();
         disableDiv.remove();
     }
+
+    //Required Error Event Listeners
+    noteTextInput.addEventListener(
+        "input", 
+        (event) => {
+            checkForRequired(
+                noteTextInput, 
+                noteTextRequiredError, 
+                "Note is required", 
+                addNoteButton)
+        }
+    );
+    noteDueDateInput.addEventListener(
+        "input", 
+        (event) => {
+            checkForRequired(
+                noteDueDateInput, 
+                noteDueDateRequiredError, 
+                "Due Date is required", 
+                addNoteButton)
+        }
+    );
+    noteDueDateInput.addEventListener("input", (event) => {
+        const dueDateTime = parse(noteDueDateInput.value, "yyyy-MM-dd'T'HH:mm", new Date());
+        const currentTime = new Date();
+        const isCurrentOrFutureDate = compareAsc(dueDateTime, currentTime);
+        if(isCurrentOrFutureDate >= 0 || noteDueDateInput.value == "") {
+            noteDueDateError.textContent = "";
+            noteDueDateError.classList.remove('popup-error-active');
+            addNoteButton.disabled = isSubmitButtonDisabled();
+        } else {
+            noteDueDateError.textContent = "Due Date must not be in the past!";
+            noteDueDateError.classList.add('popup-error-active');
+            addNoteButton.disabled = true;
+        }
+    });
     return popUpDiv;
 }
 
@@ -218,7 +287,7 @@ export function generateAddTask(personalGrid, noteList) {
     noteAddTaskDiv.appendChild(noteAddTaskSpan);
     const noteAddTaskIcon = document.createElement('span');
     noteAddTaskIcon.classList.add('material-symbols-outlined', 'note-add-task-icon');
-    noteAddTaskIcon.innerHTML = "add";
+    noteAddTaskIcon.innerHTML = "add"; 
     noteAddTaskSpan.appendChild(noteAddTaskIcon);
     const noteAddTaskText = document.createElement('span');
     noteAddTaskText.classList.add('note-add-task');
@@ -262,6 +331,35 @@ export function loadNoteList(){
         noteList.push(convertedNote);
     }
     return noteList;
+}
+
+function checkForRequired(element, errorNode, errorMessage, submitButton) {
+    if(element.value == "" || element.value == null) {
+        errorNode.textContent = errorMessage;
+        errorNode.classList.add('popup-error-active');
+    } else {
+        errorNode.textContent = "";
+        errorNode.classList.remove('popup-error-active');
+    }
+
+    if(submitButton != null) {
+        submitButton.disabled = isSubmitButtonDisabled();
+    }
+}
+
+function isSubmitButtonDisabled() {
+    let disabled = false;
+    const errors = document.getElementsByClassName('popup-error-active');
+    if(errors.length > 0) {
+        disabled = true;
+    }
+    const requiredFields = document.getElementById('popup').querySelectorAll('[required]');
+    for(let i = 0; i < requiredFields.length; i++) {
+        if(requiredFields[i].value == "") {
+            disabled = true;
+        }
+    }
+    return disabled;
 }
 
 export default Note;
